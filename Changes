@@ -1,4 +1,7 @@
 # $Id$
 
+1.06 - Fri Sep 17 13:20:34 2004
+* distribution cleanups: no need to upgrade
+
 1.02 Mon Dec  2 18:49:29 CST 2002
 	- initial release derived from HTTP::Cookies::Netscape
