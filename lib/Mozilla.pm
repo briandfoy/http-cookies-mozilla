@@ -50,6 +50,8 @@ modify it under the same terms as Perl itself.
 use base qw( HTTP::Cookies );
 use vars qw( $VERSION );
 
+use Carp qw(carp);
+
 use constant TRUE  => 'TRUE';
 use constant FALSE => 'FALSE';
 
@@ -60,22 +62,27 @@ my $EPOCH_OFFSET = $^O eq "MacOS" ? 21600 : 0;  # difference from Unix epoch
 sub load
 	{
     my( $self, $file ) = @_;
- 
+ 	
     $file ||= $self->{'file'} || return;
- 
+ 	
     local $_;
     local $/ = "\n";  # make sure we got standard record separator
 
-    open my $fh, $file or return;
-
+	my $fh;
+    unless( open $fh, $file )
+    	{
+    	carp "Could not open file [$file]: $!";
+    	return;
+    	}
+	
     my $magic = <$fh>;
 
     unless( $magic =~ /^\# HTTP Cookie File/ ) 
     	{
-		warn "$file does not look like a Mozilla cookies file" if $^W;
+		carp "$file does not look like a Mozilla cookies file";
 		close $fh;
 		return;
-    	}
+    	}	
  
     my $now = time() - $EPOCH_OFFSET;
  
@@ -90,8 +97,8 @@ sub load
 			
 		$secure = ( $secure eq TRUE );
 
-		$self->set_cookie(undef, $key, $val, $path, $domain, undef,
-			0, $secure, $expires - $now, 0);
+		$self->set_cookie( undef, $key, $val, $path, $domain, undef,
+			0, $secure, $expires - $now, 0 );
     	}
     	
     close $fh;
@@ -106,16 +113,24 @@ sub save
     $file ||= $self->{'file'} || return;
  
     local $_;
-    open my $fh, "> $file" or return;
-
+    
+    my $fh;
+    unless( open $fh, "> $file" )
+    	{
+    	carp "Could not open file [$file]: $!";
+    	return;
+		}
+		
     print $fh <<'EOT';
 # HTTP Cookie File
 # http://www.netscape.com/newsref/std/cookie_spec.html
 # This is a generated file!  Do not edit.
+# To delete cookies, use the Cookie Manager.
 
 EOT
 
     my $now = time - $EPOCH_OFFSET;
+    
     $self->scan(
     	sub {
 			my( $version, $key, $val, $path, $domain, $port,
