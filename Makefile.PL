@@ -15,12 +15,9 @@ WriteMakefile
         'NAME'           => 'HTTP::Cookies::Mozilla',
         'VERSION_FROM'   => 'lib/Mozilla.pm',
  		'PREREQ_PM'      => {
- 			'File::Find::Rule'      => '0',
  			'HTTP::Cookies'         => '1.25',
  			'Test::Manifest'        => '0.9',
  			'Test::More'            => '0',
- 			'Test::Pod'             => '0.72',
- 			'Test::Prereq'          => '0.18',
  			'Text::Diff'            => '0',
  			},
         'PM'             => {
