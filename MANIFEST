@@ -9,3 +9,6 @@ t/pod.t
 t/prereq.t
 t/save.t
 t/test_manifest
+README
+META.yml
+
