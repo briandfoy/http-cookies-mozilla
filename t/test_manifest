@@ -1,3 +1,4 @@
-load.t
+compile.t
 pod.t
 prereq.t
+load.t
