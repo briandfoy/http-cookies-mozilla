@@ -36,7 +36,7 @@ members of the project can shepherd this module appropriately.
 
 =head1 AUTHOR
 
-derived from Gisle Aas's HTTP::Cookies::Netscape package with very
+Derived from Gisle Aas's HTTP::Cookies::Netscape package with very
 few material changes.
 
 maintained by brian d foy, C<< <bdfoy@cpan.org> >>
