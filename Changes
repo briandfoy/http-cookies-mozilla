@@ -1,5 +1,9 @@
 # $Id$
 
+1.07 - Sat Mar 12 00:13:01 2005
+	* Added POD coverage tests
+	* no code changes: no need to upgrade
+
 1.06 - Fri Sep 17 13:20:34 2004
 * distribution cleanups: no need to upgrade
 
