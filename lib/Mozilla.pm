@@ -19,6 +19,9 @@ $cookie_jar = HTTP::Cookies::Mozilla->new;
 This package overrides the load() and save() methods of HTTP::Cookies
 so it can work with Mozilla cookie files.
 
+This module should be able to work with all Mozilla derived browsers
+(FireBird, Camino, et alia).
+
 See L<HTTP::Cookies>.
 
 =head1 SOURCE AVAILABILITY
