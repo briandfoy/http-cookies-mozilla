@@ -21,6 +21,7 @@ WriteMakefile
  			'Test::More'            => '0',
  			'Test::Pod'             => '0.72',
  			'Test::Prereq'          => '0.18',
+ 			'Text::Diff'            => '0',
  			},
         'PM'             => {
             'lib/Mozilla.pm' => '$(INST_LIBDIR)/Mozilla.pm',
