@@ -143,7 +143,7 @@ EOT
 
 			$expires = $expires ? $expires - $EPOCH_OFFSET : 0;
 
- 			return if $now > $expires;
+ 			return if defined $expires && $now > $expires;
 
 			$secure = $secure ? TRUE : FALSE;
 
