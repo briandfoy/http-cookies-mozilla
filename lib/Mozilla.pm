@@ -64,33 +64,33 @@ my $EPOCH_OFFSET = $^O eq "MacOS" ? 21600 : 0;  # difference from Unix epoch
 
 sub load
 	{
-    my( $self, $file ) = @_;
+	my( $self, $file ) = @_;
 
-    $file ||= $self->{'file'} || return;
+	$file ||= $self->{'file'} || return;
 
-    local $_;
-    local $/ = "\n";  # make sure we got standard record separator
+	local $_;
+	local $/ = "\n";  # make sure we got standard record separator
 
 	my $fh;
     unless( open $fh, $file )
-    	{
-    	carp "Could not open file [$file]: $!";
-    	return;
-    	}
+		{
+		carp "Could not open file [$file]: $!";
+		return;
+		}
 
     my $magic = <$fh>;
 
-    unless( $magic =~ /^\# HTTP Cookie File/ )
-    	{
+	unless( $magic =~ /^\# HTTP Cookie File/ )
+		{
 		carp "$file does not look like a Mozilla cookies file";
 		close $fh;
 		return;
-    	}
+		}
 
-    my $now = time() - $EPOCH_OFFSET;
+	my $now = time() - $EPOCH_OFFSET;
 
-    while( <$fh> )
-    	{
+	while( <$fh> )
+		{
 		next if /^\s*\#/;
 		next if /^\s*$/;
 		tr/\n\r//d;
@@ -102,29 +102,29 @@ sub load
 
 		$self->set_cookie( undef, $key, $val, $path, $domain, undef,
 			0, $secure, $expires - $now, 0 );
-    	}
+		}
 
-    close $fh;
+	close $fh;
 
-    1;
+	1;
 	}
 
 sub save
 	{
-    my( $self, $file ) = @_;
+	my( $self, $file ) = @_;
 
-    $file ||= $self->{'file'} || return;
+	$file ||= $self->{'file'} || return;
 
-    local $_;
+	local $_;
 
-    my $fh;
-    unless( open $fh, "> $file" )
-    	{
-    	carp "Could not open file [$file]: $!";
-    	return;
+	my $fh;
+	unless( open $fh, "> $file" )
+		{
+		carp "Could not open file [$file]: $!";
+		return;
 		}
 
-    print $fh <<'EOT';
+	print $fh <<'EOT';
 # HTTP Cookie File
 # http://www.netscape.com/newsref/std/cookie_spec.html
 # This is a generated file!  Do not edit.
@@ -132,10 +132,10 @@ sub save
 
 EOT
 
-    my $now = time - $EPOCH_OFFSET;
+	my $now = time - $EPOCH_OFFSET;
 
-    $self->scan(
-    	sub {
+	$self->scan(
+		sub {
 			my( $version, $key, $val, $path, $domain, $port,
 				$path_spec, $secure, $expires, $discard, $rest ) = @_;
 
@@ -143,7 +143,7 @@ EOT
 
 			$expires = $expires ? $expires - $EPOCH_OFFSET : 0;
 
- 			return if defined $expires && $now > $expires;
+			return if defined $expires && $now > $expires;
 
 			$secure = $secure ? TRUE : FALSE;
 
@@ -151,12 +151,12 @@ EOT
 
 			print $fh join( "\t", $domain, $bool, $path, $secure,
 				$expires, $key, $val ), "\n";
-    		}
-    	);
+			}
+		);
 
-    close $fh;
+	close $fh;
 
-    1;
+	1;
 	}
 
 1;
