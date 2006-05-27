@@ -1,5 +1,8 @@
 # $Id$
 
+1.09 - Sat May 27 02:43:37 2006
+	* Cleanups to the distro. No need to upgrade.
+
 1.07 - Sat Mar 12 00:13:01 2005
 	* Added POD coverage tests
 	* no code changes: no need to upgrade
