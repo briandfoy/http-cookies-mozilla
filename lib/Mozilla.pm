@@ -41,7 +41,7 @@ few material changes.
 
 maintained by brian d foy, C<< <bdfoy@cpan.org> >>
 
-=head1 COPYRIGHT
+=head1 COPYRIGHT AND LICENSE
 
 Copyright 1997-1999 Gisle Aas
 
