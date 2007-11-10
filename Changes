@@ -1,5 +1,9 @@
 # $Id$
 
+1.12 - Sat Nov 10 14:43:21 2007
+	* Cleanups for the move from CVS to SVN, kwalitee
+	* No need to upgrade
+
 1.11 - Thu Jul 19 10:33:39 2007
 	* Fixed test where the cookie had expired. Gees time flies!
 
