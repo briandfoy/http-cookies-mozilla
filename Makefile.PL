@@ -6,6 +6,7 @@ eval "use Test::Manifest 1.14";
 WriteMakefile
 	(
 	'NAME'           => 'HTTP::Cookies::Mozilla',
+	'ABSTRACT'       => 'Cookie storage and management for Mozilla',
 	'VERSION_FROM'   => 'lib/Mozilla.pm',
 	'LICENSE'        => 'perl',
 	'AUTHOR'		 => 'brian d foy <bdfoy@cpan.org>',

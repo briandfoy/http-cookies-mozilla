@@ -2,6 +2,9 @@
 package HTTP::Cookies::Mozilla;
 use strict;
 
+use warnings;
+no warnings;
+
 =head1 NAME
 
 HTTP::Cookies::Mozilla - Cookie storage and management for Mozilla
@@ -58,8 +61,7 @@ use Carp qw(carp);
 use constant TRUE  => 'TRUE';
 use constant FALSE => 'FALSE';
 
-#$VERSION = sprintf "%2d.%02d", q$Revision$ =~ m/ (\d+) \. (\d+) /xg;
-$VERSION = 1.11;
+$VERSION = 1.12;
 
 my $EPOCH_OFFSET = $^O eq "MacOS" ? 21600 : 0;  # difference from Unix epoch
 
