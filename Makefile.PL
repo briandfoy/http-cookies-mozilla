@@ -1,6 +1,8 @@
 # $Id$
 use ExtUtils::MakeMaker;
 
+require 5.006;
+
 eval "use Test::Manifest 1.14";
 	
 WriteMakefile
@@ -13,7 +15,6 @@ WriteMakefile
 	
 	'PREREQ_PM'      => {
 		'HTTP::Cookies'         => '1.25',
-		'Test::More'            => '0',
 		'Text::Diff'            => '0',
 		},
 	'PM'             => {

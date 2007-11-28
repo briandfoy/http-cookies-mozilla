@@ -61,7 +61,7 @@ use Carp qw(carp);
 use constant TRUE  => 'TRUE';
 use constant FALSE => 'FALSE';
 
-$VERSION = 1.12;
+$VERSION = 1.13;
 
 my $EPOCH_OFFSET = $^O eq "MacOS" ? 21600 : 0;  # difference from Unix epoch
 
