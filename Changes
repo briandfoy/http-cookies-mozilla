@@ -1,5 +1,10 @@
 # $Id$
 
+1.13 - Wed Nov 28 09:07:48 2007
+	* One of the test cookies expired, causing a test to fail. I've
+	fixed that test. There's no need to upgrade if you already have
+	this installed.
+
 1.12 - Sat Nov 10 14:43:21 2007
 	* Cleanups for the move from CVS to SVN, kwalitee
 	* No need to upgrade
