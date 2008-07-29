@@ -25,6 +25,23 @@ so it can work with Mozilla cookie files.
 This module should be able to work with all Mozilla derived browsers
 (FireBird, Camino, et alia).
 
+Note that as of FireFox, version 3, the
+cookie file format changed from plain text files to SQLite databases,
+so you will need to have either L<DBI>/L<DBD::SQLite>, or the
+B<sqlite3> executable somewhere in the path. Neither one has been
+put as explicit dependency, anyway, so you'll get an exception if
+you try to use this module with a new style file but without having
+any of them:
+
+   neither DBI nor pipe to sqlite3 worked (%s), install either one
+
+If your command-line B<sqlite3> is not in the C<$ENV{PATH}>,
+you can set C<$HTTP::Cookies::Mozilla::SQLITE> to point to the actual
+program to be used, e.g.:
+
+   use HTTP::Cookies::Mozilla;
+   $HTTP::Cookies::Mozilla::SQLITE = '/path/to/sqlite3';
+
 See L<HTTP::Cookies>.
 
 =head1 SOURCE AVAILABILITY
@@ -61,7 +78,7 @@ use Carp qw(carp);
 use constant TRUE  => 'TRUE';
 use constant FALSE => 'FALSE';
 
-$VERSION = 1.13;
+$VERSION = 2.01;
 $SQLITE = 'sqlite3';
 
 my $EPOCH_OFFSET = $^O eq "MacOS" ? 21600 : 0;  # difference from Unix epoch
