@@ -181,7 +181,7 @@ sub _save_ff3 {
          {RaiseError => 1, AutoCommit => 0});
 
       $dbh->do('DROP TABLE IF EXISTS moz_cookies;');
-   
+
       $dbh->do('CREATE TABLE moz_cookies '
          . ' (id INTEGER PRIMARY KEY, name TEXT, value TEXT, host TEXT,'
          . '  path TEXT,expiry INTEGER, lastAccessed INTEGER, '
@@ -214,9 +214,9 @@ sub _save_ff3 {
 BEGIN TRANSACTION;
 
 DROP TABLE IF EXISTS moz_cookies;
-CREATE TABLE moz_cookies 
+CREATE TABLE moz_cookies
    (id INTEGER PRIMARY KEY, name TEXT, value TEXT, host TEXT,
-    path TEXT,expiry INTEGER, lastAccessed INTEGER, 
+    path TEXT,expiry INTEGER, lastAccessed INTEGER,
     isSecure INTEGER, isHttpOnly INTEGER);
 
 INCIPIT
@@ -230,7 +230,7 @@ INCIPIT
                my $values = join ', ',
                   map {  # Encode all params as hex, a bit overkill
                      my $hex = unpack 'H*', $_;
-                     "X'$hex'"; 
+                     "X'$hex'";
                   } $domain, $path, $key, $val, $secure, $expires;
 
                print {$fh}
