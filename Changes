@@ -1,5 +1,10 @@
 # $Id$
 
+2.01 - Tue Jul 29 12:22:00 2008
+	* (polettix) Added support for FireFox 3 SQLite cookies file.
+	There's no need to upgrade if you do not need this
+	functionality, i.e. if you're not using FireFox 3 at all.
+
 1.13 - Fri Jun 20 15:55:51 2008
 	This is a test release
 

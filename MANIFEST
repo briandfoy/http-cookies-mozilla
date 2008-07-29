@@ -7,9 +7,11 @@ MANIFEST			This list of files
 README
 t/compile.t
 t/cookies.txt
+t/cookies.sqlite
 t/load.t
 t/pod.t
 t/pod_coverage.t
 t/prereq.t
+t/save.ff3.t
 t/save.t
 t/test_manifest
