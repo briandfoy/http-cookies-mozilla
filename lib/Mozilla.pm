@@ -42,6 +42,10 @@ program to be used, e.g.:
    use HTTP::Cookies::Mozilla;
    $HTTP::Cookies::Mozilla::SQLITE = '/path/to/sqlite3';
 
+Usage of an external program is supported under perl 5.8 onwards only,
+because previous perl versions do not support L<perlfunc/open> with
+more than three arguments, which are safer.
+
 See L<HTTP::Cookies>.
 
 =head1 SOURCE AVAILABILITY
