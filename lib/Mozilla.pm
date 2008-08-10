@@ -42,9 +42,11 @@ program to be used, e.g.:
    use HTTP::Cookies::Mozilla;
    $HTTP::Cookies::Mozilla::SQLITE = '/path/to/sqlite3';
 
-Usage of an external program is supported under perl 5.8 onwards only,
+Usage of the external program is supported under perl 5.8 onwards only,
 because previous perl versions do not support L<perlfunc/open> with
-more than three arguments, which are safer.
+more than three arguments, which are safer. If you are still sticking
+to perl 5.6, you'll have to install L<DBI>/L<DBD::SQLite> to make
+FireFox 3 cookies work.
 
 See L<HTTP::Cookies>.
 
