@@ -78,7 +78,7 @@ use Carp qw(carp);
 use constant TRUE  => 'TRUE';
 use constant FALSE => 'FALSE';
 
-$VERSION = '2.00_01';
+$VERSION = '2.00_03';
 $SQLITE = 'sqlite3';
 
 my $EPOCH_OFFSET = $^O eq "MacOS" ? 21600 : 0;  # difference from Unix epoch
@@ -96,6 +96,7 @@ sub _load_ff3 {
       $dbh->disconnect();
       1;
    } or eval {
+      require 5.008_000; # for >3 arguments open, which is safer
       open my $fh, '-|', $SQLITE, $file, $query or die $!;
       $cookies = [ map { [ split /\|/ ] } <$fh> ];
       1;

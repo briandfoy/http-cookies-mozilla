@@ -21,8 +21,8 @@ SKIP: {    # FF3, using DBI
 } ## end SKIP:
 
 SKIP: {    # FF3, using sqlite executable
-   my $prg = TestSqliteCmd::which_sqlite();
-   skip("no command-line sqlite found", 5) unless $prg;
+   my ($prg, $error) = TestSqliteCmd::which_sqlite();
+   skip($error, 5) unless $prg;
 
    $HTTP::Cookies::Mozilla::SQLITE = $prg;
    {       # force complaining from DBI
