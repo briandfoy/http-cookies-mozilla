@@ -1,12 +1,9 @@
-# $Id$
+# Changes for HTTP::Cookies::Mozilla
 
 2.01 - Tue Jul 29 12:22:00 2008
 	* (polettix) Added support for FireFox 3 SQLite cookies file.
 	There's no need to upgrade if you do not need this
 	functionality, i.e. if you're not using FireFox 3 at all.
-
-1.13 - Fri Jun 20 15:55:51 2008
-	This is a test release
 
 1.13 - Wed Nov 28 09:07:48 2007
 	* One of the test cookies expired, causing a test to fail. I've
@@ -32,7 +29,7 @@
 	* no code changes: no need to upgrade
 
 1.06 - Fri Sep 17 13:20:34 2004
-* distribution cleanups: no need to upgrade
+	* distribution cleanups: no need to upgrade
 
 1.02 Mon Dec  2 18:49:29 CST 2002
-	- initial release derived from HTTP::Cookies::Netscape
+	* initial release derived from HTTP::Cookies::Netscape
