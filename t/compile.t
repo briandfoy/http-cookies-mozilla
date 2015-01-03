@@ -1,6 +1,3 @@
-# $Id$
-
-
 use Test::More tests => 1;
 	
 foreach my $class ( "HTTP::Cookies::Mozilla" )
