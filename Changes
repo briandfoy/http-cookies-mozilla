@@ -1,4 +1,4 @@
-# Changes for HTTP::Cookies::Mozilla
+Revision history for Perl module HTTP::Cookies::Mozilla
 
 2.01 - Tue Jul 29 12:22:00 2008
 	* (polettix) Added support for FireFox 3 SQLite cookies file.
