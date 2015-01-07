@@ -1,14 +1,14 @@
-use ExtUtils::MakeMaker;
-
 require 5.006;
+use strict;
+use warnings;
 
-eval "use Test::Manifest 1.14";
+my $github    = 'https://github.com/briandfoy/';
+my $main_file = 'lib/HTTP/Cookies/Mozilla.pm';
 	
-WriteMakefile
-	(
+my %WriteMakefile = (
 	'NAME'           => 'HTTP::Cookies::Mozilla',
-	'ABSTRACT'       => 'Cookie storage and management for Mozilla',
-	'VERSION_FROM'   => 'lib/Mozilla.pm',
+	'ABSTRACT_FROM'  => $main_file,
+	'VERSION_FROM'   => $main_file,
 	'LICENSE'        => 'perl',
 	'AUTHOR'		 => 'brian d foy <bdfoy@cpan.org>',
 	
@@ -16,13 +16,27 @@ WriteMakefile
 		'HTTP::Cookies'         => '1.25',
 		'Text::Diff'            => '0',
 		},
-	'PM'             => {
-		'lib/Mozilla.pm' => '$(INST_LIBDIR)/Mozilla.pm',
-		},
-	'MAN3PODS'		 => {
-		'lib/Mozilla.pm' => '$(INST_MAN3DIR)/HTTP::Cookies::Mozilla.3',
-		},
 	
 	clean => { FILES => 'HTTP-Cookies-Mozilla-*' },
 	);
 
+
+sub arguments { \%WriteMakefile }
+
+do_it() unless caller;
+sub do_it {
+	require File::Spec;
+	my $MM ='ExtUtils::MakeMaker';
+	my $MM_version =
+		eval{ "$MM " . $WriteMakefile{'CONFIGURE_REQUIRES'}{'ExtUtils::MakeMaker'} }
+			//
+		"$MM 6.64";
+	eval "use $MM_version";
+	eval "use Test::Manifest 1.21" 
+		if -e File::Spec->catfile( qw(t test_manifest) );
+	WriteMakefile( %WriteMakefile );
+	}
+
+
+no warnings;
+__PACKAGE__;
