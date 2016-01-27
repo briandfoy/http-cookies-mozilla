@@ -20,7 +20,7 @@ HTTP::Cookies::Mozilla - Cookie storage and management for Mozilla
 
 =head1 DESCRIPTION
 
-This package overrides the load() and save() methods of HTTP::Cookies
+This package overrides the C<load()> and C<save()> methods of HTTP::Cookies
 so it can work with Mozilla cookie files.
 
 This module should be able to work with all Mozilla derived browsers
