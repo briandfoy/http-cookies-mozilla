@@ -62,6 +62,8 @@ The source is in GitHub:
 Derived from Gisle Aas's HTTP::Cookies::Netscape package with very
 few material changes.
 
+Flavio Poletti added the SQLite support.
+
 maintained by brian d foy, C<< <bdfoy@cpan.org> >>
 
 =head1 COPYRIGHT AND LICENSE
