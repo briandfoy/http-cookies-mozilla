@@ -83,6 +83,10 @@ my %WriteMakefile = (
 				},
 			homepage => $github,
 			},
+		recommends => {
+			'DBI'          => '0',
+			'DBD::SQLite'  => '0',
+			},
 		},
 
 	clean => { FILES => "$dist-*" },
