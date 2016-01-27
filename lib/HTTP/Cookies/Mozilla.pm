@@ -160,6 +160,9 @@ sub load {
 
 		$secure = ( $secure eq TRUE );
 
+		# The cookie format is an absolute time in epoch seconds, so
+		# we subtract the current time (with appropriate offsets) to
+		# get the max_age for the second-to-last argument.
 		$self->set_cookie( undef, $key, $val, $path, $domain, undef,
 		    0, $secure, $expires - _now(), 0 );
 		}
