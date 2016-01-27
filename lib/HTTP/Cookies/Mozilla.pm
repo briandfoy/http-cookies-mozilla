@@ -86,7 +86,6 @@ use constant FALSE => 'FALSE';
 $VERSION = '2.011';
 $SQLITE = 'sqlite3';
 
-my $EPOCH_OFFSET = $^O eq "MacOS" ? 21600 : 0;  # difference from Unix epoch
 
 sub _load_ff3 {
    my ($self, $file) = @_;
@@ -173,10 +172,12 @@ sub load
 	1;
 	}
 
-sub _scansub_maker {  # Encapsulate checks logic during cookie scan
-   my ($self, $coresub) = @_;
+BEGIN {
+	my $EPOCH_OFFSET = $^O eq "MacOS" ? 21600 : 0;  # difference from Unix epoch
+	sub _epoch_offset { $EPOCH_OFFSET }
+	}
 
-	my $now = time - $EPOCH_OFFSET;
+sub _now { time() - _epoch_offset() };
 
    return sub {
       my( $version, $key, $val, $path, $domain, $port,
