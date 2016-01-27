@@ -88,83 +88,80 @@ $SQLITE = 'sqlite3';
 
 
 sub _load_ff3 {
-   my ($self, $file) = @_;
-   my $cookies;
-   my $query = 'SELECT host, path, name, value, isSecure, expiry '
-      . ' FROM moz_cookies';
-   eval {
-      require DBI;
-      my $dbh = DBI->connect('dbi:SQLite:dbname=' . $file, '', '',
-         {RaiseError => 1});
-      $cookies = $dbh->selectall_arrayref($query);
-      $dbh->disconnect();
-      1;
-   } or eval {
-      require 5.008_000; # for >3 arguments open, which is safer
-      open my $fh, '-|', $SQLITE, $file, $query or die $!;
-      $cookies = [ map { [ split /\|/ ] } <$fh> ];
-      1;
-   } or do {
-      carp "neither DBI nor pipe to sqlite3 worked ($@), install either one";
-      return;
-   };
-
-	my $now = time() - $EPOCH_OFFSET;
+	my ($self, $file) = @_;
+	my $cookies;
+	my $query = 'SELECT host, path, name, value, isSecure, expiry '
+	  . ' FROM moz_cookies';
+	eval {
+		require DBI;
+		my $dbh = DBI->connect('dbi:SQLite:dbname=' . $file, '', '',
+		 {RaiseError => 1}
+		 );
+		$cookies = $dbh->selectall_arrayref($query);
+		$dbh->disconnect();
+		1;
+		}
+	or eval {
+		require 5.008_000; # for >3 arguments open, which is safer
+		open my $fh, '-|', $SQLITE, $file, $query or die $!;
+		$cookies = [ map { [ split /\|/ ] } <$fh> ];
+		1;
+		}
+	or do {
+		carp "neither DBI nor pipe to sqlite3 worked ($@), install either one";
+		return;
+		};
 
 	for my $cookie ( @$cookies )
 		{
-		my( $domain, $path, $key, $val, $secure, $expires )
-         = @$cookie;
+		my( $domain, $path, $key, $val, $secure, $expires ) = @$cookie;
 
 		$self->set_cookie( undef, $key, $val, $path, $domain, undef,
-			0, $secure, $expires - $now, 0 );
+		   0, $secure, $expires - _now(), 0 );
 		}
 
-   return 1;
+	return 1;
 }
 
-sub load
-	{
+sub load {
 	my( $self, $file ) = @_;
 
-	$file ||= $self->{'file'} || return;
+	$file ||= $self->{'file'} || do {
+		carp "load() did not get a filename!";
+		return;
+		};
 
-   return $self->_load_ff3($file) if $file =~ m{\. sqlite}imsx;
+	return $self->_load_ff3($file) if $file =~ m{\.sqlite}i;
 
 	local $_;
 	local $/ = "\n";  # make sure we got standard record separator
 
 	my $fh;
-    unless( open $fh, $file )
-		{
+	unless( open $fh, '<:utf8', $file ) {
 		carp "Could not open file [$file]: $!";
 		return;
 		}
 
-    my $magic = <$fh>;
+	my $magic = <$fh>;
 
-	unless( $magic =~ /^\# HTTP Cookie File/ )
-		{
+	unless( $magic =~ /^\# HTTP Cookie File/ ) {
 		carp "$file does not look like a Mozilla cookies file";
 		close $fh;
 		return;
 		}
 
-	my $now = time() - $EPOCH_OFFSET;
-
-	while( <$fh> )
-		{
+	while( <$fh> ) {
 		next if /^\s*\#/;
 		next if /^\s*$/;
 		tr/\n\r//d;
 
 		my( $domain, $bool1, $path, $secure, $expires, $key, $val )
-			= split /\t/;
+		   = split /\t/;
 
 		$secure = ( $secure eq TRUE );
 
 		$self->set_cookie( undef, $key, $val, $path, $domain, undef,
-			0, $secure, $expires - $now, 0 );
+		    0, $secure, $expires - _now(), 0 );
 		}
 
 	close $fh;
@@ -179,61 +176,62 @@ BEGIN {
 
 sub _now { time() - _epoch_offset() };
 
-   return sub {
-      my( $version, $key, $val, $path, $domain, $port,
-         $path_spec, $secure, $expires, $discard, $rest ) = @_;
+sub _scansub_maker {  # Encapsulate checks logic during cookie scan
+	my ($self, $coresub) = @_;
 
-      return if $discard && not $self->{ignore_discard};
+	return sub {
+		my( $version, $key, $val, $path, $domain, $port,
+		    $path_spec, $secure, $expires, $discard, $rest ) = @_;
 
-      $expires = $expires ? $expires - $EPOCH_OFFSET : 0;
-      return if defined $expires && $now > $expires;
+		return if $discard && not $self->{ignore_discard};
 
-      return $coresub->($domain, $path, $key, $val, $secure, $expires);
-   }
-}
+		$expires = $expires ? $expires - _epoch_offset() : 0;
+		return if defined $expires && _now() > $expires;
+
+		return $coresub->($domain, $path, $key, $val, $secure, $expires);
+		};
+	}
 
 sub _save_ff3 {
-   my ($self, $file) = @_;
+	my ($self, $file) = @_;
 
-	my $now = time - $EPOCH_OFFSET;
-   my @fnames = qw( host path name value isSecure expiry );
-   my $fnames = join ', ', @fnames;
+	my @fnames = qw( host path name value isSecure expiry );
+	my $fnames = join ', ', @fnames;
 
-   eval {
-      require DBI;
-      my $dbh = DBI->connect('dbi:SQLite:dbname=' . $file, '', '',
-         {RaiseError => 1, AutoCommit => 0});
+	eval {
+		require DBI;
+		my $dbh = DBI->connect('dbi:SQLite:dbname=' . $file, '', '',
+		   {RaiseError => 1, AutoCommit => 0});
 
-      $dbh->do('DROP TABLE IF EXISTS moz_cookies;');
+		$dbh->do('DROP TABLE IF EXISTS moz_cookies;');
 
-      $dbh->do('CREATE TABLE moz_cookies '
-         . ' (id INTEGER PRIMARY KEY, name TEXT, value TEXT, host TEXT,'
-         . '  path TEXT,expiry INTEGER, lastAccessed INTEGER, '
-         . '  isSecure INTEGER, isHttpOnly INTEGER);');
+		$dbh->do('CREATE TABLE moz_cookies '
+		    . ' (id INTEGER PRIMARY KEY, name TEXT, value TEXT, host TEXT,'
+		    . '  path TEXT,expiry INTEGER, lastAccessed INTEGER, '
+		    . '  isSecure INTEGER, isHttpOnly INTEGER);');
 
-      { # restrict scope for $sth
-         my $pholds = join ', ', ('?') x @fnames;
-         my $sth = $dbh->prepare(
-            "INSERT INTO moz_cookies($fnames) VALUES ($pholds)");
-         $self->scan($self->_scansub_maker(
-               sub {
-                  my( $domain, $path, $key, $val, $secure, $expires ) = @_;
+		{ # restrict scope for $sth
+		my $pholds = join ', ', ('?') x @fnames;
+		my $sth = $dbh->prepare(
+		    "INSERT INTO moz_cookies($fnames) VALUES ($pholds)");
+		$self->scan($self->_scansub_maker(
+			sub {
+				my( $domain, $path, $key, $val, $secure, $expires ) = @_;
+				$secure = $secure ? 1 : 0;
+				$sth->execute($domain, $path, $key, $val, $secure, $expires);
+				}
+				)
+			);
+		$sth->finish();
+		}
 
-                  $secure = $secure ? 1 : 0;
-
-                  $sth->execute($domain, $path, $key, $val, $secure, $expires);
-               }
-            )
-         );
-         $sth->finish();
-      }
-
-      $dbh->commit();
-      $dbh->disconnect();
-      1;
-   } or eval {
-      open my $fh, '|-', $SQLITE, $file or die $!;
-      print {$fh} <<'INCIPIT';
+		$dbh->commit();
+		$dbh->disconnect();
+		1;
+		}
+	or eval {
+		open my $fh, '|-', $SQLITE, $file or die $!;
+		print {$fh} <<'INCIPIT';
 
 BEGIN TRANSACTION;
 
@@ -245,52 +243,51 @@ CREATE TABLE moz_cookies
 
 INCIPIT
 
-      $self->scan($self->_scansub_maker(
-            sub {
-               my( $domain, $path, $key, $val, $secure, $expires ) = @_;
+		$self->scan( $self->_scansub_maker(
+			sub {
+				my( $domain, $path, $key, $val, $secure, $expires ) = @_;
+				$secure = $secure ? 1 : 0;
+				my $values = join ', ',
+					map {  # Encode all params as hex, a bit overkill
+					my $hex = unpack 'H*', $_;
+					"X'$hex'";
+					} ( $domain, $path, $key, $val, $secure, $expires );
+				print {$fh}
+					"INSERT INTO moz_cookies( $fnames ) VALUES ( $values );\n";
+				}
+			)
+		);
 
-               $secure = $secure ? 1 : 0;
-
-               my $values = join ', ',
-                  map {  # Encode all params as hex, a bit overkill
-                     my $hex = unpack 'H*', $_;
-                     "X'$hex'";
-                  } $domain, $path, $key, $val, $secure, $expires;
-
-               print {$fh}
-                  "INSERT INTO moz_cookies( $fnames ) VALUES ( $values );\n";
-            }
-         )
-      );
-
-      print {$fh} <<'EPILOGUE';
+		print {$fh} <<'EPILOGUE';
 
 UPDATE moz_cookies SET lastAccessed = id;
 END TRANSACTION;
 
 EPILOGUE
-      1;
-   } or do {
-      carp "neither DBI nor pipe to sqlite3 worked ($@), install either one";
-      return;
-   };
+	1;
+	}
+	or do {
+		carp "neither DBI nor pipe to sqlite3 worked ($@), install either one";
+		return;
+	};
 
-   return 1;
+	return 1;
 }
 
-sub save
-	{
+sub save {
 	my( $self, $file ) = @_;
 
-	$file ||= $self->{'file'} || return;
+	$file ||= $self->{'file'} || do {
+		carp "save() did not get a filename!";
+		return;
+		};
 
-   return $self->_save_ff3($file) if $file =~ m{\. sqlite}imsx;
+	return $self->_save_ff3($file) if $file =~ m{\. sqlite}imsx;
 
 	local $_;
 
 	my $fh;
-	unless( open $fh, "> $file" )
-		{
+	unless( open $fh, '>:utf8', $file ) {
 		carp "Could not open file [$file]: $!";
 		return;
 		}
@@ -304,17 +301,14 @@ sub save
 EOT
 
 	$self->scan($self->_scansub_maker(
-         sub {
-            my( $domain, $path, $key, $val, $secure, $expires ) = @_;
-
-            $secure = $secure ? TRUE : FALSE;
-
-            my $bool = $domain =~ /^\./ ? TRUE : FALSE;
-
-            print $fh join( "\t", $domain, $bool, $path, $secure,
-               $expires, $key, $val ), "\n";
-            }
-         )
+		sub {
+			my( $domain, $path, $key, $val, $secure, $expires ) = @_;
+			$secure = $secure ? TRUE : FALSE;
+			my $bool = $domain =~ /^\./ ? TRUE : FALSE;
+			print $fh join( "\t", $domain, $bool, $path, $secure,
+				$expires, $key, $val ), "\n";
+			}
+			)
 		);
 
 	close $fh;
