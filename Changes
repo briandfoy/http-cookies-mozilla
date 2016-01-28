@@ -1,13 +1,16 @@
 Revision history for Perl module HTTP::Cookies::Mozilla
 
 2.031 2016-01-27T19:44:59Z
-	* Freshen the distro, give Flavio credit, and update the expiry
-	on a cookie that would make a test fail. This module has been around
+	* Freshen the distro, give Flavio credit, and restored cookie
+	removed in 2.03 with updated expiry time. This module has been around
 	for a long time!
    * Added workaround to tests for saving cookies for addressing a
    rare race condition in the interaction with HTTP::Cookies.
    * No need to upgrade from 2.01 on. No need to upgrade from a previous
    version unless you need FireFox 3 support.
+
+2.03 - 2011-03-14T22:49:00Z
+   * (polettix) Removed one cookie from usatoday in test suite.
 
 2.02 - 2008-09-02T01:59:00Z
    * (polettix) Hopefully fixed annoyances that make the test
