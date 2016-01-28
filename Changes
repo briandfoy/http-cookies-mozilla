@@ -1,9 +1,20 @@
 Revision history for Perl module HTTP::Cookies::Mozilla
 
-2.011 2016-01-27T19:44:59Z
+2.021 2016-01-27T19:44:59Z
 	* Freshen the distro, give Flavio credit, and update the expiry
 	on a cookie that would make a test fail. This module has been around
 	for a long time!
+   * Added workaround to tests for saving cookies for addressing a
+   rare race condition in the interaction with HTTP::Cookies.
+   * No need to upgrade from 2.01 on. No need to upgrade from a previous
+   version unless you need FireFox 3 support.
+
+2.02 - 2008-09-02T01:59:00Z
+   * (polettix) Hopefully fixed annoyances that make the test
+   suite fail in Win32 platforms. Changed name to test file
+   to make Windows see it properly. There's no need to upgrade
+   if you already have 2.01 installed or you don't need
+   FireFox 3 support.
 
 2.01 - 2008-07-29
 	* (polettix) Added support for FireFox 3 SQLite cookies file.
