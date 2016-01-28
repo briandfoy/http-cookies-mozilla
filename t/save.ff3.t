@@ -38,23 +38,46 @@ sub check {
 
    my %Domains = qw( .ebay.com 2 .usatoday.com 3 );
 
-   my $jar = HTTP::Cookies::Mozilla->new(File => $dist_file);
+   # get cookie jar, attempt multiple times to be sure to operate in the
+   # same second (time-wise) so we can avoid race condition with
+   # HTTP::Cookies
+   my ($jar, $time_delta_1);
+   for my $attempt (1 .. 5) {
+      my $start = time();
+      $jar = HTTP::Cookies::Mozilla->new(File => $dist_file);
+      $time_delta_1 = time() - $start;
+      last unless $time_delta_1;
+   }
+
    isa_ok($jar, 'HTTP::Cookies::Mozilla');
 
    my $result = $jar->save($save_file);
    ok(-s $save_file, "something was saved, actually ($condition)");
 
-   $jar->save($txt_file1);
+   # attempt multiple times too
+   my ($jar2, $time_delta_2);
+   for my $attempt (1 .. 5) {
+      my $start = time();
+      $jar2 = HTTP::Cookies::Mozilla->new(File => $save_file);
+      $time_delta_2 = time() - $start;
+      last unless $time_delta_2;
+   }
 
-   my $jar2 = HTTP::Cookies::Mozilla->new(File => $save_file);
    isa_ok($jar2, 'HTTP::Cookies::Mozilla');
 
-   $jar2->save($txt_file2);
+   SKIP: {
+      skip 'could not avoid race condition', 1
+         if ($time_delta_1 + $time_delta_2) > 0;
 
-   my $diff = Text::Diff::diff($txt_file1, $txt_file2);
-   my $same = not $diff;
-   ok($same, "Saved file is same as original ($condition)");
-   print STDERR $diff;
+      $jar->save($txt_file1);
+      $jar2->save($txt_file2);
+
+      my $diff = Text::Diff::diff($txt_file1, $txt_file2);
+      my $same = not $diff;
+      ok($same, "Saved file is same as original ($condition)");
+      print STDERR $diff;
+   };
+
 
    # clean up for next call to check, if any
    -e $_ && unlink $_ for $save_file, $txt_file1, $txt_file2;
