@@ -1,10 +1,10 @@
 use Test::More tests => 8;
-use Text::Diff;
 
 use HTTP::Cookies::Mozilla;
 
 use lib 't';
 use TestSqliteCmd;
+use TestRelaxDiff ();
 
 my $dist_file = 't/cookies.sqlite';
 my $save_file = 't/cookies2.sqlite';
@@ -38,6 +38,8 @@ sub check {
 
    my %Domains = qw( .ebay.com 2 .usatoday.com 3 );
 
+   my $start = time();
+
    my $jar = HTTP::Cookies::Mozilla->new(File => $dist_file);
    isa_ok($jar, 'HTTP::Cookies::Mozilla');
 
@@ -49,9 +51,11 @@ sub check {
    my $jar2 = HTTP::Cookies::Mozilla->new(File => $save_file);
    isa_ok($jar2, 'HTTP::Cookies::Mozilla');
 
+   my $time_delta = time() - $start;
+
    $jar2->save($txt_file2);
 
-   my $diff = Text::Diff::diff($txt_file1, $txt_file2);
+   my $diff = TestRelaxDiff::diff($txt_file1, $txt_file2, $time_delta);
    my $same = not $diff;
    ok($same, "Saved file is same as original ($condition)");
    print STDERR $diff;
