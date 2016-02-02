@@ -1,4 +1,5 @@
 package HTTP::Cookies::Mozilla;
+use 5.010;
 use strict;
 
 use warnings;

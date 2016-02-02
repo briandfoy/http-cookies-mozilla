@@ -3,8 +3,8 @@ use strict;
 use warnings;
 
 sub which_sqlite {
-   eval { require 5.008_000; 1 }
-     or return (undef, 'perl 5.8 needed for external command execution');
+   eval { require 5.010; 1 }
+     or return (undef, 'perl 5.10 needed for external command execution');
    my $prg = $ENV{SQLITE_PATH} || 'sqlite3';
    open my $fh, '-|', $prg, '-version'
      or return (undef, "no pipe to $prg");

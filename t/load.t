@@ -1,4 +1,5 @@
 use Test::More tests => 15;
+use v5.10;
 
 use HTTP::Cookies::Mozilla;
 use Data::Dumper;
