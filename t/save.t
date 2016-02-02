@@ -1,6 +1,12 @@
 use Test::More 0.98;
 use Text::Diff;
 
+BEGIN {
+	my $time = time;
+	# don't let time change
+    *CORE::GLOBAL::time = sub { $time };
+    }
+
 use HTTP::Cookies::Mozilla;
 
 my $class = 'HTTP::Cookies::Mozilla';
@@ -14,6 +20,8 @@ my %Domains = qw( .ebay.com 2 .usatoday.com 3 );
 
 my $jar = HTTP::Cookies::Mozilla->new( File => $dist_file );
 isa_ok( $jar, 'HTTP::Cookies::Mozilla' );
+
+sleep 2;
 
 my $result = $jar->save( $save_file );
 
