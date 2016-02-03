@@ -86,6 +86,7 @@ my %WriteMakefile = (
 		recommends => {
 			'DBI'          => '0',
 			'DBD::SQLite'  => '0',
+			'IPC::System::Simple' => '1.25',
 			},
 		},
 

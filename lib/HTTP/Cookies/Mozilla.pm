@@ -15,7 +15,7 @@ HTTP::Cookies::Mozilla - Cookie storage and management for Mozilla
 
 	use HTTP::Cookies::Mozilla;
 
-	$cookie_jar = HTTP::Cookies::Mozilla->new;
+	my $cookie_jar = HTTP::Cookies::Mozilla->new;
 
 	# otherwise same as HTTP::Cookies
 
@@ -85,36 +85,98 @@ use constant TRUE  => 'TRUE';
 use constant FALSE => 'FALSE';
 
 $VERSION = '2.011';
-$SQLITE = 'sqlite3';
 
+sub sqlite {
+	require File::Which;
+	state $sqlite = File::Which::which( 'sqlite3' );
+	my( $self, $program ) = @_;
+
+	if( defined $program ) {
+		my $which = File::Which::which( $program );
+		unless( defined $which ) {
+			carp "Could not find $program in path";
+			return;
+			}
+		$sqlite = $which;
+		}
+
+	$sqlite;
+	}
+
+sub _has_sqlite {
+	my( $self ) = @_;
+	-x $self->sqlite;
+	}
+
+sub _has_dbi {
+	state $has_dbi = eval { require DBD::SQLite; 1 };
+	$has_dbi;
+	}
+
+sub _has_ipc_system_simple {
+	state $has_ipc_system_simple = eval { require IPC::System::Simple; 1 };
+	$has_ipc_system_simple;
+	}
+
+sub _supports_pipe_list_open {
+	return 0 if $^O =~ m/\A (?:MSWin32) \z/x;
+	return 1;
+	}
 
 sub _load_ff3 {
-	my ($self, $file) = @_;
-	my $cookies;
-	my $query = 'SELECT host, path, name, value, isSecure, expiry '
+	my( $self, $file ) = @_;
+	my $cookies = [];
+	state $query = 'SELECT host, path, name, value, isSecure, expiry '
 	  . ' FROM moz_cookies';
-	eval {
-		require DBI;
+
+	unless( -e $file ) {
+		carp "Could not find file [$file]";
+		return;
+		}
+
+	if( $self->_has_dbi ) {
 		my $dbh = DBI->connect('dbi:SQLite:dbname=' . $file, '', '',
 		 {RaiseError => 1}
 		 );
 		$cookies = $dbh->selectall_arrayref($query);
 		$dbh->disconnect();
-		1;
 		}
-	or eval {
-		require 5.008_000; # for >3 arguments open, which is safer
-		open my $fh, '-|', $SQLITE, $file, $query or die $!;
-		$cookies = [ map { [ split /\|/ ] } <$fh> ];
-		1;
-		}
-	or do {
-		carp "neither DBI nor pipe to sqlite3 worked ($@), install either one";
-		return;
-		};
+	elsif( $self->_has_sqlite ) {
+		my @output;
+		my @args = ( $self->sqlite, $file, $query );
 
-	for my $cookie ( @$cookies )
-		{
+		if( $self->_supports_pipe_list_open ) {
+			if( open my $fh, '-|', @args ) {
+				@output = <$fh>;
+				}
+			else {
+				carp "Could not read from SQLite: $!";
+				return;
+				}
+			}
+		elsif( $self->_has_ipc_system_simple ) {
+			@output = IPC::System::Simple::capture( @args );
+			}
+		else {
+			carp "Using last resort of backticks to get SQLite output to get cookies. Install DBI or IPC::System::Simple for safer options.";
+			unless( $file =~ /\A [A-Z0-9\._-]+ \z/x ) {
+				carp "Refusing to try potentially unsafe filename [$file] in backticks";
+				return;
+				}
+			@output = `@args`;
+			}
+
+		@$cookies = map {
+			chomp;
+			[ split /\|/ ];
+			} @output;
+		}
+	else {
+		carp "Could not use DBI or IPC::System::Simple to get cookies from the SQLite file [$file]";
+		return;
+		}
+
+	for my $cookie ( @$cookies ) {
 		my( $domain, $path, $key, $val, $secure, $expires ) = @$cookie;
 
 		$self->set_cookie( undef, $key, $val, $path, $domain, undef,
@@ -127,7 +189,7 @@ sub _load_ff3 {
 sub load {
 	my( $self, $file ) = @_;
 
-	$file ||= $self->{'file'} || do {
+	$file //= $self->{'file'} || do {
 		carp "load() did not get a filename!";
 		return;
 		};
@@ -197,13 +259,12 @@ sub _scansub_maker {  # Encapsulate checks logic during cookie scan
 	}
 
 sub _save_ff3 {
-	my ($self, $file) = @_;
+	my( $self, $file ) = @_;
 
-	my @fnames = qw( host path name value isSecure expiry );
-	my $fnames = join ', ', @fnames;
+	my @columns = qw( host path name value isSecure expiry );
+	my $columns = join ', ', @columns;
 
-	eval {
-		require DBI;
+	if( $self->_has_dbi ) {
 		my $dbh = DBI->connect('dbi:SQLite:dbname=' . $file, '', '',
 		   {RaiseError => 1, AutoCommit => 0});
 
@@ -215,9 +276,9 @@ sub _save_ff3 {
 		    . '  isSecure INTEGER, isHttpOnly INTEGER);');
 
 		{ # restrict scope for $sth
-		my $pholds = join ', ', ('?') x @fnames;
+		my $pholds = join ', ', ('?') x @columns;
 		my $sth = $dbh->prepare(
-		    "INSERT INTO moz_cookies($fnames) VALUES ($pholds)");
+		    "INSERT INTO moz_cookies($columns) VALUES ($pholds)");
 		$self->scan($self->_scansub_maker(
 			sub {
 				my( $domain, $path, $key, $val, $secure, $expires ) = @_;
@@ -231,10 +292,9 @@ sub _save_ff3 {
 
 		$dbh->commit();
 		$dbh->disconnect();
-		1;
 		}
-	or eval {
-		open my $fh, '|-', $SQLITE, $file or die $!;
+	elsif( $self->_supports_pipe_list_open ) {
+		open my $fh, '|-', $self->sqlite, $file or die $!;
 		print {$fh} <<'INCIPIT';
 
 BEGIN TRANSACTION;
@@ -257,7 +317,7 @@ INCIPIT
 					"X'$hex'";
 					} ( $domain, $path, $key, $val, $secure, $expires );
 				print {$fh}
-					"INSERT INTO moz_cookies( $fnames ) VALUES ( $values );\n";
+					"INSERT INTO moz_cookies( $columns ) VALUES ( $values );\n";
 				}
 			)
 		);
@@ -268,15 +328,14 @@ UPDATE moz_cookies SET lastAccessed = id;
 END TRANSACTION;
 
 EPILOGUE
-	1;
-	}
-	or do {
-		carp "neither DBI nor pipe to sqlite3 worked ($@), install either one";
+		}
+	else {
+		carp "Neither DBI nor pipe to sqlite3 worked ($@), install either one to save cookies";
 		return;
-	};
+		};
 
 	return 1;
-}
+	}
 
 sub save {
 	my( $self, $file ) = @_;
