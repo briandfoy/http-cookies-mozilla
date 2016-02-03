@@ -32,7 +32,11 @@ subtest using_dbi => sub {
 subtest using_sqlite => sub {
 		SKIP: {    # FF3, using sqlite executable
 			my( $sqlite, $error ) = TestSqliteCmd::which_sqlite();
-			diag( "sqlite TestSqliteCmd from is $sqlite" );
+			diag( "sqlite from TestSqliteCmd is $sqlite" );
+
+			ok( -e $sqlite, "sqlite exists (found at $sqlite)" );
+			ok( -x $sqlite, "sqlite is executable" );
+
 			skip($error, 5) unless $sqlite;
 
 			no strict 'refs';
@@ -42,19 +46,7 @@ subtest using_sqlite => sub {
 
 			HTTP::Cookies::Mozilla->sqlite( $sqlite );
 			is(
-				basename( HTTP::Cookies::Mozilla->sqlite() ), $sqlite,
-				"Set sqlite location correctly"
-				);
-
-			my $sqlite_path = HTTP::Cookies::Mozilla->sqlite();
-			diag( "sqlite_path is $sqlite_path" );
-
-			ok( -e $sqlite_path, "sqlite exists (found at $sqlite_path)" );
-			ok( -x $sqlite_path, "sqlite is executable" );
-
-			HTTP::Cookies::Mozilla->sqlite( $sqlite );
-			is(
-				basename( HTTP::Cookies::Mozilla->sqlite() ), $sqlite,
+				HTTP::Cookies::Mozilla->sqlite(), $sqlite,
 				"Set sqlite location correctly"
 				);
 

@@ -62,6 +62,7 @@ my %WriteMakefile = (
 
 	'TEST_REQUIRES' => {
 		'File::Spec::Functions' => '0',
+		'File::Which'           => '0',
 		'Test::More'            => '0.94',
 		'Text::Diff'            => '0',
 		},

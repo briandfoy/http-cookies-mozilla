@@ -1,20 +1,42 @@
 package TestSqliteCmd;
+use v5.10;
+
 use strict;
 use warnings;
 
+use Carp qw(croak);
+use File::Which qw(which);
+
 sub which_sqlite {
-   eval { require 5.010; 1 }
-     or return (undef, 'perl 5.10 needed for external command execution');
-   my $prg = $ENV{SQLITE_PATH} || 'sqlite3';
-   open my $fh, '-|', $prg, '-version'
-     or return (undef, "no pipe to $prg");
-   my $version = <$fh>;
-   return (undef, "could not read $prg version") unless $version;
-   my ($major) = split /\./, $version;
-   $major =~ /\A \d+ \z/mxs
-     or return (undef, "no suitable version in $prg");
-   $major >= 3 or return (undef, "need $prg to be at least version 3");
-   return ($prg, undef);
-} ## end sub which_sqlite
+	my $sqlite = $ENV{SQLITE_PATH} || which('sqlite3');
+
+	my $version = do {;
+		unless( $^O eq 'MSWin32' ) {
+			# this part doesn't work on Windows
+			open my $fh, '-|', $sqlite, '-version'
+				or return (undef, "no pipe to $sqlite");
+			chomp( my $version = <$fh> );
+			$version;
+			}
+		else { # Windows, so untaint
+			croak "Bad path for SQLite [$sqlite]"
+				unless $sqlite =~ m/\A [a-z0-9\._\-\\\/]+ \z /x;
+			`$sqlite -version`;
+			}
+		};
+
+	return (undef, "could not read $sqlite version") unless $version;
+
+	if( $version =~ /\A ([0-9]+) /x ) {
+		my $major = $1;
+		return ( undef, "need sqlite to be at least version 3" )
+			unless $major >= 3;
+		}
+	else {
+		return ( undef, "no suitable version in $sqlite" );
+		}
+
+	return ( $sqlite, undef );
+	}
 
 1;
