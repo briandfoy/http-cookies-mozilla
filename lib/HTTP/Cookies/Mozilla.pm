@@ -74,12 +74,10 @@ The source is in GitHub:
 
 =head1 AUTHOR
 
-Derived from Gisle Aas's HTTP::Cookies::Netscape package with very
-few material changes.
+This module first derived from Gisle Aas's HTTP::Cookies::Netscape
+package but has gone far beyond that.
 
 Flavio Poletti added the SQLite support.
-
-maintained by brian d foy, C<< <bdfoy@cpan.org> >>
 
 =head1 COPYRIGHT AND LICENSE
 
