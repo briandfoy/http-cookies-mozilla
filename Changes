@@ -1,5 +1,10 @@
 Revision history for Perl module HTTP::Cookies::Mozilla
 
+2.011_01 2016-02-03T00:10:04Z
+	* Use IPC::System::Simple to get to sqlite3 on Windows
+	* Try backticks if everything else fails, but only with nice looking
+	filenames.
+
 2.011 2016-01-27T19:44:59Z
 	* Freshen the distro, give Flavio credit, and update the expiry
 	on a cookie that would make a test fail. This module has been around
