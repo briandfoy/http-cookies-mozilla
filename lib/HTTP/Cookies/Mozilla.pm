@@ -84,7 +84,7 @@ use Carp qw(carp);
 use constant TRUE  => 'TRUE';
 use constant FALSE => 'FALSE';
 
-$VERSION = '2.011';
+$VERSION = '2.011_01';
 
 sub sqlite {
 	require File::Which;
