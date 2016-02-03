@@ -1,5 +1,9 @@
 Revision history for Perl module HTTP::Cookies::Mozilla
 
+2.011_02 2016-02-03T01:21:32Z
+	* Try harder to make Windows work by not using a pipe open with
+	a list
+
 2.011_01 2016-02-03T00:10:04Z
 	* Use IPC::System::Simple to get to sqlite3 on Windows
 	* Try backticks if everything else fails, but only with nice looking
