@@ -20,7 +20,7 @@ sub which_sqlite {
 			}
 		else { # Windows, so untaint
 			croak "Bad path for SQLite [$sqlite]"
-				unless $sqlite =~ m/\A [a-z0-9\._\-\\\/]+ \z /x;
+				unless $sqlite =~ m/\A [a-z0-9:\._\-\\\/]+ \z /ix;
 			`$sqlite -version`;
 			}
 		};
