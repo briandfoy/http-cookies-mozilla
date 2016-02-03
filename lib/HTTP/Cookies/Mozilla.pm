@@ -52,6 +52,20 @@ FireFox 3 cookies work.
 
 See L<HTTP::Cookies>.
 
+=head2 Methods
+
+=over 4
+
+=item * sqlite( SQLITE )
+
+With no arguments, return the path to C<sqlite3>. With an argument,
+set the path. You can set a full path or relative name.
+
+This method uses L<File::Which> to scan through the path directories
+to get the full path.
+
+=back
+
 =head1 SOURCE AVAILABILITY
 
 The source is in GitHub:
