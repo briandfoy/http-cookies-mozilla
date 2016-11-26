@@ -83,7 +83,7 @@ use Carp qw(carp);
 use constant TRUE  => 'TRUE';
 use constant FALSE => 'FALSE';
 
-$VERSION = '2.031_01';
+$VERSION = '2.032';
 $SQLITE = 'sqlite3';
 
 
