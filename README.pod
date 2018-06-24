@@ -72,16 +72,16 @@ the source repository:
 
 =over 4
 
-=item *	L<https://github.com/briandfoy/HTTP-Cookies-Mozilla>
+=item *	L<https://github.com/briandfoy/http-cookies-mozilla>
 
 =back
 
-If you find a problem, file a ticket in the L<issue 
-tracker|https://github.com/briandfoy/HTTP-Cookies-Mozilla/issues>:
+If you find a problem, file a ticket in the L<issue
+tracker|https://github.com/briandfoy/http-cookies-mozilla/issues>:
 
 =over 4
 
-=item *	L<https://github.com/briandfoy/HTTP-Cookies-Mozilla/issues>
+=item *	L<https://github.com/briandfoy/http-cookies-mozilla/issues>
 
 =back
 

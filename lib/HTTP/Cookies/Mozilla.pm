@@ -55,7 +55,7 @@ See L<HTTP::Cookies>.
 
 The source is in GitHub:
 
-	https://github.com/briandfoy/HTTP-Cookies-Mozilla
+	https://github.com/briandfoy/http-cookies-mozilla
 
 =head1 AUTHOR
 
