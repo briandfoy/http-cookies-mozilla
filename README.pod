@@ -23,7 +23,7 @@ for any Perl module.
 
 To read about L<HTTP::Cookies::Mozilla>, look at the embedded documentation 
 in the module itself. Inside the distribution, you can format it 
-with L<perldoc|http://perldoc.perl.org/perldoc.html>:
+with L<perldoc|https://perldoc.perl.org/perldoc.html>:
 
 	% perldoc lib/HTTP/Cookies/Mozilla.pm
 
@@ -92,7 +92,7 @@ that's the best way for me to forget to do something.
 
 Besides the issue trackers, you can find help at
 L<Perlmonks|http://www.perlmonks.org> or
-L<Stackoverflow|http://www.stackoverflow.com>, both of which have many
+L<Stackoverflow|https://www.stackoverflow.com>, both of which have many
 competent Perlers who can answer your question, almost in real time.
 They might not know the particulars of this module, but they can help
 you diagnose your problem. 
