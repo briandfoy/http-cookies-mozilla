@@ -2,6 +2,16 @@
 
 =encoding utf8
 
+=for HTML <a href="https://travis-ci.org/briandfoy/HTTP-Cookies-Mozilla"><img src="https://travis-ci.org/briandfoy/HTTP-Cookies-Mozilla.svg?branch=master" /></a>
+
+=for HTML <a href='https://ci.appveyor.com/project/briandfoy/HTTP-Cookies-Mozilla'><img src='https://ci.appveyor.com/api/projects/status/q4f5qk7u2hfpivsx' /></a>
+
+=for HTML <a href='https://coveralls.io/github/briandfoy/HTTP-Cookies-Mozilla?branch=master'><img src='https://coveralls.io/repos/github/briandfoy/HTTP-Cookies-Mozilla/badge.svg?branch=master' alt='Coverage Status' /></a>
+
+=for HTML <a href="https://github.com/briandfoy/HTTP-Cookies-Mozilla/blob/master/LICENSE"><img src="https://img.shields.io/cpan/l/HTTP-Cookies-Mozilla.svg" /></a>
+
+=for HTML <a href="http://www.metacpan.org/module/HTTP::Cookies::Mozilla"><img src="https://img.shields.io/cpan/v/HTTP-Cookies-Mozilla.svg" /></A>
+
 =head1 The HTTP::Cookies::Mozilla module
 
 This is the I<README> for the L<HTTP::Cookies::Mozilla> Perl module. You're probably 
