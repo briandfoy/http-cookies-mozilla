@@ -71,7 +71,7 @@ maintained by brian d foy, C<< <bdfoy@cpan.org> >>
 Copyright 1997-1999 Gisle Aas
 
 This library is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+modify it under the terms of the Artistic License 2.0.
 
 =cut
 
