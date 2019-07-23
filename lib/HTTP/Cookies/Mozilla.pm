@@ -14,7 +14,8 @@ HTTP::Cookies::Mozilla - Cookie storage and management for Mozilla
 
 	use HTTP::Cookies::Mozilla;
 
-	$cookie_jar = HTTP::Cookies::Mozilla->new;
+	my $file = ...; # Firefox profile dir / cookies.sqlite
+	my $cookie_jar = HTTP::Cookies::Mozilla->new( file => $file );
 
 	# otherwise same as HTTP::Cookies
 
