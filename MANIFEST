@@ -15,7 +15,7 @@ t/cookies.txt
 t/load.t
 t/pod.t
 t/pod_coverage.t
-t/save.ff3.t
+t/save_ff3.t
 t/save.t
 t/test_manifest
 t/TestSqliteCmd.pm
