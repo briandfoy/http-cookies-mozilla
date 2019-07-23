@@ -5,7 +5,7 @@
 image:
   - Visual Studio 2015
   - ubuntu1604
-  - ubuntu1804
+#  - ubuntu1804
   - ubuntu
 
 environment:
