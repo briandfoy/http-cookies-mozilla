@@ -72,7 +72,7 @@ Maintained by brian d foy, C<< <bdfoy@cpan.org> >>
 
 Parts Copyright 1997-1999 Gisle Aas.
 
-Other parts Copyright 2018 by brian d foy, <bdfoy@cpan.org>
+Other parts Copyright 2018-2019 by brian d foy, C<< <bdfoy@cpan.org> >>
 
 This library is free software; you can redistribute it and/or modify
 it under the terms of the Artistic License 2.0.
