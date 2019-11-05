@@ -3,6 +3,7 @@ use v5.10;
 
 use lib qw(lib);
 
+use strict;
 use Data::Dumper;
 use File::Spec::Functions qw(catfile);
 use HTTP::Cookies::Mozilla;
