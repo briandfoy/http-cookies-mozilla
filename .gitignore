@@ -30,3 +30,6 @@ MANIFEST 3
 Changes 2
 Changes 3
 *.icould
+MANIFEST*[123456789]
+Changes*[123456789]
+
