@@ -78,3 +78,4 @@ MANIFEST\s\d
 \.icloud$
 \A\.github\b
 
+\.gitattributes\b
