@@ -62,7 +62,7 @@ jobs:
               run: |
                 move C:\Strawberry C:\Strawberry-vendor
                 choco upgrade chocolatey
-                choco upgrade strawberryperl --version ${{matrix.perl}} --install-arguments="'/l*v c:\StrawberryPerl_msi_install.log'"
+                choco install strawberryperl --version ${{matrix.perl}} --install-arguments="'/l*v c:\StrawberryPerl_msi_install.log'"
             - name: Archive production artifacts
               uses: actions/upload-artifact@v3
               with:
