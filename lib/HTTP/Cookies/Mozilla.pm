@@ -94,8 +94,7 @@ $SQLITE = 'sqlite3';
 sub _load_ff3 {
 	my ($self, $file) = @_;
 	my $cookies;
-	my $query = 'SELECT host, path, name, value, isSecure, expiry '
-	  . ' FROM moz_cookies';
+	my $query = 'SELECT host, path, name, value, isSecure, expiry FROM moz_cookies';
 	eval {
 		require DBI;
 		my $dbh = DBI->connect('dbi:SQLite:dbname=' . $file, '', '',
