@@ -60,6 +60,7 @@ jobs:
             - name: Install Strawberry Perl
               if: steps.cache-restore.outputs.cache-hit != 'true'
               run: |
+                choco upgrade chocolatey
                 choco upgrade strawberryperl --version ${{matrix.perl}}
             - name: Set up Perl
               run: |
