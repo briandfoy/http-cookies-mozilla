@@ -46,9 +46,19 @@ jobs:
         steps:
             - run: git config --global core.autocrlf false
             - uses: actions/checkout@v3
-            - name: Set up Perl
+            - name: Cache restore
+              id: cache-restore
+              uses: actions/cache/restore@v3
+              with:
+                path: |
+                  C:\strawberry
+              key: ${{ matrix.os }}-strawberry
+            - name: Install Strawberry Perl
+              if: steps.cache-restore.outputs.cache-hit != 'true'
               run: |
                 choco install strawberryperl
+            - name: Set up Perl
+              run: |
                 echo "C:\strawberry\c\bin"         | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
                 echo "C:\strawberry\perl\site\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
                 echo "C:\strawberry\perl\bin"      | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
@@ -100,3 +110,11 @@ jobs:
                 cpan -M https://www.cpan.org -T Devel::Cover Devel::Cover::Report::Coveralls
                 perl Makefile.PL
                 cover -test -report coveralls
+            - name: Cache save
+              id: cache-save
+              uses: actions/cache/save@v3
+              with:
+                path: |
+                  C:\strawberry
+              key: ${{ steps.cache-restore.outputs.cache-primary-key }
+
