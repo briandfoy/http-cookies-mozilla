@@ -116,5 +116,5 @@ jobs:
               with:
                 path: |
                   C:\strawberry
-                key: ${{ steps.cache-restore.outputs.cache-primary-key }
+                key: ${{ steps.cache-restore.outputs.cache-primary-key }}
 
