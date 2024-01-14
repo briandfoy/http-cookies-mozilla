@@ -52,7 +52,7 @@ jobs:
               with:
                 path: |
                   C:\strawberry
-              key: ${{ matrix.os }}-strawberry
+                key: ${{ matrix.os }}-strawberry
             - name: Install Strawberry Perl
               if: steps.cache-restore.outputs.cache-hit != 'true'
               run: |
@@ -116,5 +116,5 @@ jobs:
               with:
                 path: |
                   C:\strawberry
-              key: ${{ steps.cache-restore.outputs.cache-primary-key }
+                key: ${{ steps.cache-restore.outputs.cache-primary-key }
 
