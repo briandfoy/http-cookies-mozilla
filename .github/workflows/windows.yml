@@ -60,6 +60,7 @@ jobs:
             - name: Install Strawberry Perl
               if: steps.cache-restore.outputs.cache-hit != 'true'
               run: |
+                rename C:\Strawberry C:\Strawberry-vendor
                 choco upgrade chocolatey
                 choco upgrade strawberryperl --version ${{matrix.perl}}
             - name: Set up Perl
