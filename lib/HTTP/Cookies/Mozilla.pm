@@ -66,13 +66,13 @@ few material changes.
 
 Flavio Poletti added the SQLite support.
 
-Maintained by brian d foy, C<< <bdfoy@cpan.org> >>
+Maintained by brian d foy, C<< <briandfoy@pobox.com> >>
 
 =head1 COPYRIGHT AND LICENSE
 
 Parts Copyright 1997-1999 Gisle Aas.
 
-Other parts Copyright 2018-2019 by brian d foy, C<< <bdfoy@cpan.org> >>
+Other parts Copyright 2018-2019 by brian d foy, C<< <briandfoy@pobox.com> >>
 
 This library is free software; you can redistribute it and/or modify
 it under the terms of the Artistic License 2.0.
