@@ -1,5 +1,8 @@
 Revision history for Perl module HTTP::Cookies::Mozilla
 
+3.001 2025-01-26T21:19:05Z
+	* refresh distro and move to BRIANDFOY
+
 2.036 2019-07-23T03:27:30Z
 	* Rename a test file so it doesn't confuse Windows with extra dots
 
