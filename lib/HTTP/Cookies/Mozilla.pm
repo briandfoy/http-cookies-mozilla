@@ -157,7 +157,7 @@ use DBD::SQLite::Constants qw/:file_open/;
 use constant TRUE  => 'TRUE';
 use constant FALSE => 'FALSE';
 
-$VERSION = '3.001';
+$VERSION = '3.002';
 $SQLITE = 'sqlite3';
 
 sub _load_ff3 {
