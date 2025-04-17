@@ -1,3 +1,4 @@
+use v5.8;
 package HTTP::Cookies::Mozilla;
 use strict;
 
