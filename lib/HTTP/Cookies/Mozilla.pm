@@ -15,6 +15,7 @@ HTTP::Cookies::Mozilla - Cookie storage and management for Mozilla
 
 	use HTTP::Cookies::Mozilla;
 
+	# see "SQLite access notes"
 	my $file = ...; # Firefox profile dir / cookies.sqlite
 	my $cookie_jar = HTTP::Cookies::Mozilla->new( file => $file );
 
@@ -23,7 +24,7 @@ HTTP::Cookies::Mozilla - Cookie storage and management for Mozilla
 =head1 DESCRIPTION
 
 This package overrides the C<load()> and C<save()> methods of
-HTTP::Cookies so it can work with Mozilla cookie files. These might
+L<HTTP::Cookies> so it can work with Mozilla cookie files. These might
 be stored in the user profile directory as F<cookies>. On macOS,for
 instance, that's F<~/Application Support/Firefox/*/cookies.sqlite>.
 
@@ -52,7 +53,74 @@ more than three arguments, which are safer. If you are still sticking
 to perl 5.6, you'll have to install L<DBI>/L<DBD::SQLite> to make
 FireFox 3 cookies work.
 
-See L<HTTP::Cookies>.
+=head2 SQLite access notes
+
+SQLite allows a connection to lock the database for exclusive use, and
+Firefox does this. If a browser is running, it probably has an
+exclusive lock on the database file.
+
+If you want to add cookies that the browser will see, you need to add
+the cookies to the file that the browser would use. You can't add to
+that while the browser is running because the database is locked, but
+if you copy the file and try to replace it, you can miss updates that
+the browser makes when it closes. You have to coordinate that yourself.
+
+If you just want to read it, you may have to copy the file to another
+location then use that.
+
+=head2 Privacy settings
+
+Firefox has a setting to erase all cookie and session data on quit.
+With this set, all of your cookies will disappear, even if the expiry
+times are in the future. Look in settings under "Privacy & Security"
+
+=head2 Cookie data
+
+Firefox tracks more information than L<HTTP::Cookies> tracks. So far
+this module tracks host, path, name, value, and expiry because these are
+the columns common among the different modules:
+
+=over 4
+
+=item * id (no support) - primary key row
+
+=item * originAttributes (no support) - something about containers
+
+=item * name (supported)
+
+=item * value (supported)
+
+=item * host (supported)
+
+=item * path (supported)
+
+=item * expiry (supported)
+
+=item * lastAccessed (no support)
+
+=item * creationTime (no support)
+
+=item * isSecure (supported)
+
+=item * isHttpOnly (no support)
+
+=item * isBrowserElement (no support)
+
+=item * sameSite (no support)
+
+=item * rawSameSite (no support)
+
+=item * rawSameSite (no support)
+
+=back
+
+=head1 SEE ALSO
+
+=over 4
+
+=item * L<HTTP::Cookies>.
+
+=back
 
 =head1 SOURCE AVAILABILITY
 
@@ -84,6 +152,7 @@ use base qw( HTTP::Cookies );
 use vars qw( $VERSION $SQLITE );
 
 use Carp qw(carp);
+use DBD::SQLite::Constants qw/:file_open/;
 
 use constant TRUE  => 'TRUE';
 use constant FALSE => 'FALSE';
@@ -91,22 +160,20 @@ use constant FALSE => 'FALSE';
 $VERSION = '3.001';
 $SQLITE = 'sqlite3';
 
-
 sub _load_ff3 {
 	my ($self, $file) = @_;
 	my $cookies;
 	my $query = 'SELECT host, path, name, value, isSecure, expiry FROM moz_cookies';
+
 	eval {
 		require DBI;
-		my $dbh = DBI->connect('dbi:SQLite:dbname=' . $file, '', '',
-		 {RaiseError => 1}
-		 );
+		my $dbh = DBI->connect('dbi:SQLite:dbname=' . $file, '', '', { RaiseError => 1, } );
+
 		$cookies = $dbh->selectall_arrayref($query);
 		$dbh->disconnect();
 		1;
 		}
 	or eval {
-		require 5.008_000; # for >3 arguments open, which is safer
 		open my $fh, '-|', $SQLITE, $file, $query or die $!;
 		$cookies = [ map { [ split /\|/ ] } <$fh> ];
 		1;
@@ -116,8 +183,7 @@ sub _load_ff3 {
 		return;
 		};
 
-	for my $cookie ( @$cookies )
-		{
+	for my $cookie ( @$cookies ) {
 		my( $domain, $path, $key, $val, $secure, $expires ) = @$cookie;
 
 		$self->set_cookie( undef, $key, $val, $path, $domain, undef,
@@ -212,11 +278,31 @@ sub _save_ff3 {
 
 		$dbh->do('DROP TABLE IF EXISTS moz_cookies;');
 
-		$dbh->do('CREATE TABLE moz_cookies '
-		    . ' (id INTEGER PRIMARY KEY, name TEXT, value TEXT, host TEXT,'
-		    . '  path TEXT,expiry INTEGER, lastAccessed INTEGER, '
-		    . '  isSecure INTEGER, isHttpOnly INTEGER);');
-
+		$dbh->do(<<'SQL');
+CREATE TABLE moz_cookies (
+	id INTEGER PRIMARY KEY,
+	originAttributes TEXT NOT NULL DEFAULT '',
+	name TEXT,
+	value TEXT,
+	host TEXT,
+	path TEXT,
+	expiry INTEGER,
+	lastAccessed INTEGER,
+	creationTime INTEGER,
+	isSecure INTEGER,
+	isHttpOnly INTEGER,
+	inBrowserElement INTEGER DEFAULT 0,
+	sameSite INTEGER DEFAULT 0,
+	rawSameSite INTEGER DEFAULT 0,
+	schemeMap INTEGER DEFAULT 0,
+	isPartitionedAttributeSet INTEGER DEFAULT 0,
+CONSTRAINT moz_uniqueid UNIQUE (
+	name,
+	host,
+	path,
+	originAttributes
+))
+SQL
 		{ # restrict scope for $sth
 		my $pholds = join ', ', ('?') x @fnames;
 		my $sth = $dbh->prepare(
@@ -239,15 +325,32 @@ sub _save_ff3 {
 	or eval {
 		open my $fh, '|-', $SQLITE, $file or die $!;
 		print {$fh} <<'INCIPIT';
-
 BEGIN TRANSACTION;
 
 DROP TABLE IF EXISTS moz_cookies;
-CREATE TABLE moz_cookies
-   (id INTEGER PRIMARY KEY, name TEXT, value TEXT, host TEXT,
-    path TEXT,expiry INTEGER, lastAccessed INTEGER,
-    isSecure INTEGER, isHttpOnly INTEGER);
-
+CREATE TABLE moz_cookies (
+	id INTEGER PRIMARY KEY,
+	originAttributes TEXT NOT NULL DEFAULT '',
+	name TEXT,
+	value TEXT,
+	host TEXT,
+	path TEXT,
+	expiry INTEGER,
+	lastAccessed INTEGER,
+	creationTime INTEGER,
+	isSecure INTEGER,
+	isHttpOnly INTEGER,
+	inBrowserElement INTEGER DEFAULT 0,
+	sameSite INTEGER DEFAULT 0,
+	rawSameSite INTEGER DEFAULT 0,
+	schemeMap INTEGER DEFAULT 0,
+	isPartitionedAttributeSet INTEGER DEFAULT 0,
+CONSTRAINT moz_uniqueid UNIQUE (
+	name,
+	host,
+	path,
+	originAttributes
+));
 INCIPIT
 
 		$self->scan( $self->_scansub_maker(
