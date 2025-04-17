@@ -1,6 +1,6 @@
 Revision history for Perl module HTTP::Cookies::Mozilla
 
-3.001 2025-04-17T09:44:11Z
+3.002 2025-04-17T09:44:11Z
 	* update table creation for latest Mozilla schema
 	* note that you can't access the SQLite file when the browser
 	is running (#14)
