@@ -141,7 +141,7 @@ Maintained by brian d foy, C<< <briandfoy@pobox.com> >>
 
 Parts Copyright 1997-1999 Gisle Aas.
 
-Other parts Copyright 2018-2026 by brian d foy, C<< <briandfoy@pobox.com> >>
+Other parts Copyright © 2018-2026, brian d foy, C<< <briandfoy@pobox.com> >>
 
 This library is free software; you can redistribute it and/or modify
 it under the terms of the Artistic License 2.0.
