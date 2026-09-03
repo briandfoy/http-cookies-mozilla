@@ -152,7 +152,6 @@ use base qw( HTTP::Cookies );
 use vars qw( $VERSION $SQLITE );
 
 use Carp qw(carp);
-use DBD::SQLite::Constants qw/:file_open/;
 
 use constant TRUE  => 'TRUE';
 use constant FALSE => 'FALSE';
