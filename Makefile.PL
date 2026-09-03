@@ -86,7 +86,7 @@ my %WriteMakefile = (
 	'PREREQ_PM'     => {
 		'Carp'                  => '0',
 		'DBD::SQLite'           => '0',
-		'DBI'                   => '0',
+		( $] >= '5.012' ? ( DBI => '1.652' ) : () ),
 		'Data::Dumper'          => '0',
 		'HTTP::Cookies'         => '1.25',
 		'base'                  => '0',
