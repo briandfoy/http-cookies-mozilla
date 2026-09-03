@@ -55,6 +55,10 @@ FireFox 3 cookies work.
 
 =head2 SQLite access notes
 
+NOTE: DBI-1.652 now requires at least Perl v5.12, so this package does
+not declare it as a dependency for v5.8 or v5.10. It might still work with
+older versions that you install yourself.
+
 SQLite allows a connection to lock the database for exclusive use, and
 Firefox does this. If a browser is running, it probably has an
 exclusive lock on the database file.
