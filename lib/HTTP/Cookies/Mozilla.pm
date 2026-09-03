@@ -194,7 +194,7 @@ sub _load_ff3 {
 		}
 
 	return 1;
-}
+	}
 
 sub load {
 	my( $self, $file ) = @_;
@@ -382,10 +382,10 @@ EPILOGUE
 	or do {
 		carp "neither DBI nor pipe to sqlite3 worked ($@), install either one";
 		return;
-	};
+		};
 
 	return 1;
-}
+	}
 
 sub save {
 	my( $self, $file ) = @_;
